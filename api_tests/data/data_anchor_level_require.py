@@ -1,7 +1,7 @@
 import copy
 import random
 
-anchor_level_require_max = {
+anchor_level_requires = {
     "1": [
         {
             "level": 1,
@@ -162,7 +162,7 @@ indicator = ["Last7DayAvgAcu", "Last1DayFansCnt", "Last7DayWatchTotalDuration", 
 def get_level_for_data(data):
     level = 0
     regin = data['regin']
-    for anchor_level_require in anchor_level_require_max.values():
+    for anchor_level_require in anchor_level_requires.values():
         flag = []
         require = [i for i in anchor_level_require if i['regin'] == regin][0]
         if len(require) == 0:
@@ -222,11 +222,11 @@ def generate_boundary_values(level: str, regin: str = ""):
 
         return [dict(t) for t in {tuple(d.items()) for d in values}]
 
-    for item in [i for i in anchor_level_require_max[level] if i["regin"]]:
+    for item in [i for i in anchor_level_requires[level] if i["regin"]]:
         if regin.lower() == item['regin'].lower():
             boundary_value += set_boundary_value(item)
     if not boundary_value:
-        boundary_value += set_boundary_value([i for i in anchor_level_require_max[level] if i["regin"] == ""][0])
+        boundary_value += set_boundary_value([i for i in anchor_level_requires[level] if i["regin"] == ""][0])
 
     return boundary_value
 

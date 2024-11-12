@@ -49,7 +49,7 @@ class XlsTools(object):
 
 
 if __name__ == '__main__':
-    xls = XlsTools("../data/data.xlsx")
+    xls = XlsTools("../data/tasks.xlsx")
     res = xls.read_all_rows()
     for i in res:
         print(i)
