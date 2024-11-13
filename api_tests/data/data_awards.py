@@ -7,6 +7,7 @@ class DataAwards:
         self.awards_to_task_datas = None
         self.title = None
         self.get_awards_to_task_datas()
+        self.award_detail = self.get_award_detail()
 
     def get_awards_to_task_datas(self):
         awards = []
@@ -36,15 +37,16 @@ class DataAwards:
                                          'value': data[i]})
         return award_detail
 
-    def get_awards(self, task_type, anchor_level, task_level):
-        award_detail = self.get_award_detail()
+    def get_award_value(self, task_type, anchor_level, task_level):
+        award_detail = self.award_detail
         for award in award_detail:
             if (award['task_type'], award["anchor_level"], award["task_level"]) == (
                     task_type, anchor_level, task_level):
                 return award["value"]
+        raise Exception("NONE")
 
 
 if __name__ == "__main__":
-    datas = DataAwards().get_award_detail()
+    datas = DataAwards().award_detail
     for i in datas:
         print(i)

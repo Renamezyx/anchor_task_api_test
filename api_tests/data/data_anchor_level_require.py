@@ -96,7 +96,7 @@ anchor_level_requires = {
             'regin': 'US',
             'Last7DayAvgAcu': [3, 29],
             'Last1DayFansCnt': [15 * 1000, 35 * 1000 - 1],
-            'Last7DayWatchTotalDuration': [],
+            'Last7DayWatchTotalDuration': [0],
             'Last30DayIncome': [40 * 1000, 600 * 1000 - 1],
             'Last7DayIncome': [10 * 1000, 150 * 1000 - 1],
             'condition': 'or'
@@ -164,10 +164,13 @@ def get_level_for_data(data):
     regin = data['regin']
     for anchor_level_require in anchor_level_requires.values():
         flag = []
-        require = [i for i in anchor_level_require if i['regin'] == regin][0]
+
+        require = [i for i in anchor_level_require if i['regin'] == regin]
         if len(require) == 0:
             regin = ""
             require = [i for i in anchor_level_require if i['regin'] == regin][0]
+        else:
+            require = require[0]
         condition = all if require["condition"] == "and" else any
         # print(f"---------{require["level"]}---------")
         for k, v in require.items():
@@ -222,17 +225,21 @@ def generate_boundary_values(level: str, regin: str = ""):
 
         return [dict(t) for t in {tuple(d.items()) for d in values}]
 
-    for item in [i for i in anchor_level_requires[level] if i["regin"]]:
+    for item in [i for i in anchor_level_requires[level] if i["regin"] == regin]:
         if regin.lower() == item['regin'].lower():
             boundary_value += set_boundary_value(item)
     if not boundary_value:
         boundary_value += set_boundary_value([i for i in anchor_level_requires[level] if i["regin"] == ""][0])
-
-    return boundary_value
+    res = []
+    for i in boundary_value:
+        i["level"] = get_level_for_data(i)
+        res.append(i)
+    return res
 
 
 if __name__ == '__main__':
-    t = generate_boundary_values("6")
-    for i in t:
-        i["level"] = get_level_for_data(i)
-        print(i)
+    for level in range(1, 7):
+        t = generate_boundary_values(str(level), "JP")
+        for i in t:
+            i["level"] = get_level_for_data(i)
+            print(i)
