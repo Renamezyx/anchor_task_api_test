@@ -55,30 +55,27 @@ def get_data(scene):
                                                                    anchor_level=task_case["anchor_level"])
 
             task_cases.append(task_case)
+    print(len(task_cases))
 
-    anchor_level_cases = []
+    def get_anchor_level_case(i, regin=""):
+
+        level_cases = generate_boundary_values(str(i), regin=regin)
+        level_case = level_cases[random.randint(0, len(level_cases) - 1)]
+        anchor_data = AnchorWeeklyData()
+        anchor_data.level_1 = level_case["Last7DayAvgAcu"]
+        anchor_data.level_2 = level_case["Last1DayFansCnt"]
+        anchor_data.level_3 = level_case["Last7DayWatchTotalDuration"]
+        anchor_data.level_4 = level_case["Last30DayIncome"]
+        anchor_data.level_5 = level_case["Last7DayIncome"]
+        anchor_data.mock_scene = scene
+        return {"level_case": level_case, "anchor_case": anchor_data.to_dict()}
+
     if scene == 4:
-
-        for i in range(1, 7):
-            level_cases = generate_boundary_values(i) + generate_boundary_values(i, "US") + generate_boundary_values(i,
-                                                                                                                     "JP")
-            level_case = level_cases[random.randint(0, len(level_cases) - 1)]
-            anchor_data = AnchorWeeklyData()
-            anchor_data.level_1 = level_case["Last7DayAvgAcu"]
-            anchor_data.level_2 = level_case["Last1DayFansCnt"]
-            anchor_data.level_3 = level_case["Last7DayWatchTotalDuration"]
-            anchor_data.level_4 = level_case["Last30DayIncome"]
-            anchor_data.level_5 = level_case["Last7DayIncome"]
-            anchor_data.mock_scene = scene
-            anchor_level_cases.append(anchor_data.to_dict())
-
-        for anchor_level_case in anchor_level_cases:
-            for task_case in task_cases:
-                case = task_case
-                if task_case["task_type"] == "weekly":
-                    if anchor_level_case["level"] == task_case["anchor_level"]:
-                        anchor_level_case[task_case["task_key"]] = task_case["value"]
-                        cases.append(case)
+        for task_case in task_cases:
+            if task_case["task_type"] == "weekly":
+                anchor_level_case = get_anchor_level_case(task_case["anchor_level"])
+                anchor_level_case["anchor_case"][task_case["task_key"]] = task_case["value"]
+                cases.append({"task_case": task_case, "anchor_case": anchor_level_case})
     return cases
 
 

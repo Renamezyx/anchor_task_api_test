@@ -239,7 +239,6 @@ def generate_boundary_values(level: str, regin: str = ""):
 
 if __name__ == '__main__':
     for level in range(1, 7):
-        t = generate_boundary_values(str(level), "JP")
+        t = generate_boundary_values(str(level))
         for i in t:
-            i["level"] = get_level_for_data(i)
             print(i)
