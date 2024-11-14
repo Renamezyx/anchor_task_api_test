@@ -65,20 +65,29 @@ class DataTasks:
         return res
 
     def compute_task_level(self, task_detail):
-        same_task_level_tasks = [i for i in self.task_details
-                                 if i["anchor_level"] == task_detail["anchor_level"]
-                                 and i["task_type"] == task_detail["task_type"]
-                                 and i["task_name"] == task_detail["task_name"]
-                                 and i["task_key"] == task_detail["task_key"]]
-        same_task_level_tasks = sorted(same_task_level_tasks, key=lambda x: int(x["anchor_task_level"]), reverse=True)
+        same_tasks_key_for_anchor_level = [i for i in self.task_details
+                                           if i["anchor_level"] == task_detail["anchor_level"]
+                                           and i["task_type"] == task_detail["task_type"]
+                                           and i["task_name"] == task_detail["task_name"]
+                                           and i["task_key"] == task_detail["task_key"]]
+        same_tasks_key_for_anchor_level = sorted(same_tasks_key_for_anchor_level,
+                                                 key=lambda x: int(x["anchor_task_level"]))
 
-        anchor_task_level = same_task_level_tasks[-1]["anchor_task_level"]
-
-        for task in same_task_level_tasks:
-            if task["value"] <= task_detail["value"]:
-                anchor_task_level = task["anchor_task_level"]
-                break
+        anchor_task_level = None
+        anchor_task_assert_value = None
+        for index, task in enumerate(same_tasks_key_for_anchor_level):
+            if task_detail["value"] >= task["value"]:
+                if index == len(same_tasks_key_for_anchor_level) - 1:
+                    anchor_task_level = same_tasks_key_for_anchor_level[-1]["anchor_task_level"]
+                    anchor_task_assert_value = same_tasks_key_for_anchor_level[-1]["value"]
+                else:
+                    anchor_task_level = same_tasks_key_for_anchor_level[index + 1]["anchor_task_level"]
+                    anchor_task_assert_value = same_tasks_key_for_anchor_level[index + 1]["value"]
+        if anchor_task_level is None:
+            anchor_task_level = same_tasks_key_for_anchor_level[0]["anchor_task_level"]
+            anchor_task_assert_value = same_tasks_key_for_anchor_level[0]["value"]
         task_detail["anchor_task_level"] = anchor_task_level
+        task_detail["assert_value"] = anchor_task_assert_value
         return task_detail
 
 

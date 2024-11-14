@@ -59,7 +59,8 @@ def get_data(scene):
                                                                    anchor_level=task_case["anchor_level"])
             if task_case["task_key"] in ["go_live_duration", "total_watch_duration", "link_micro_duration",
                                          "co_host_duration"]:
-                task_case["value"] *= 60
+                task_case["value_format"] = task_case["value"] * 60
+                task_case["assert_value_format"] = task_case["assert_value"] * 60
             task_cases.append(task_case)
     print(len(task_cases))
 
