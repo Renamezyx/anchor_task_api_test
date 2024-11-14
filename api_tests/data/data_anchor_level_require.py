@@ -225,6 +225,7 @@ def generate_boundary_values(level: str, regin: str = ""):
 
         return [dict(t) for t in {tuple(d.items()) for d in values}]
 
+    a = [i for i in anchor_level_requires[level] if i["regin"] == regin]
     for item in [i for i in anchor_level_requires[level] if i["regin"] == regin]:
         if regin.lower() == item['regin'].lower():
             boundary_value += set_boundary_value(item)
@@ -237,8 +238,14 @@ def generate_boundary_values(level: str, regin: str = ""):
     return res
 
 
+def generate_data_for_level(level: str, regin=""):
+    datas = []
+    for i in range(1, len(anchor_level_requires) + 1):
+        datas += [data for data in generate_boundary_values(str(i)) if data["level"] == int(level)]
+    return datas
+
+
 if __name__ == '__main__':
     for level in range(1, 7):
-        t = generate_boundary_values(str(level))
-        for i in t:
-            print(i)
+        t = generate_data_for_level(str(level))
+        print(t)
