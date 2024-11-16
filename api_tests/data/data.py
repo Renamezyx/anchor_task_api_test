@@ -1,9 +1,8 @@
 import datetime
 import json
 import random
-from enum import Enum
 
-from api_tests.data.data_anchor_level_require import generate_boundary_values, generate_data_for_level
+from api_tests.data.data_anchor_level_require import generate_data_for_level
 from api_tests.data.data_awards import DataAwards
 from api_tests.data.data_tasks import DataTasks
 

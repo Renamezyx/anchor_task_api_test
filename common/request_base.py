@@ -27,8 +27,8 @@ class RequestBase(object):
         self.session = sessions.Session()
         self.debug = config.DEBUG
         self.proxies = {
-            'http': 'http://127.0.0.1:8002',
-            'https': 'http://127.0.0.1:8002',
+            'http': 'http://127.0.0.1:4780',
+            'https': 'http://127.0.0.1:4780',
         }
 
     @log_request_response
