@@ -11,7 +11,7 @@ pip install -r requirements.txt
 ### 下载 allure 生成工具（依赖jdk）, 并配置系统环境变量
 
 ```cmd
-pass
+https://github.com/allure-framework/allure2/releases
 ```
 
 ### case 生成
