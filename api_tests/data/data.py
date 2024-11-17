@@ -83,7 +83,7 @@ def get_data(scene):
                 case_no_2 += 1
                 anchor_level_case = get_anchor_level_case(task_case["anchor_level"])
                 anchor_level_case["anchor_case"][task_case["task_key"]] = task_case["value"]
-                cases.append({"case_no": f"{case_no_1}_{str(case_no_2)}", "task_case": task_case,
+                cases.append({"case_no": f"{case_no_1}_{case_no_2:04d}", "task_case": task_case,
                               "anchor_case": anchor_level_case})
     return cases
 

@@ -1,3 +1,6 @@
 .venv
 .pytest_cache
 .idea
+./logs/*
+./reports/*
+./allure_report/*
