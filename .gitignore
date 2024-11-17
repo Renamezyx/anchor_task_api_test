@@ -1,6 +1,12 @@
 .venv
 .pytest_cache
 .idea
-./logs/*
-./reports/*
-./allure_report/*
+logs/*
+reports/*
+allure_report/*
+
+
+
+!logs/.gitkeep
+!reports/.gitkeep
+!allure_report/.gitkeep
