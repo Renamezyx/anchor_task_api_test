@@ -40,6 +40,7 @@ class AnchorWeeklyData:
         anchor_dict["3"] = anchor_dict.pop("level_3")
         anchor_dict["4"] = anchor_dict.pop("level_4")
         anchor_dict["5"] = anchor_dict.pop("level_5")
+
         return anchor_dict
 
 
@@ -77,18 +78,22 @@ def get_data(scene):
         anchor_data.mock_scene = scene
         return {"level_case": level_case, "anchor_case": anchor_data.to_dict()}
 
-    if scene == 4:
+    if scene == 3:
         for task_case in task_cases:
             if task_case["task_type"] == "weekly":
                 case_no_2 += 1
                 anchor_level_case = get_anchor_level_case(task_case["anchor_level"])
-                anchor_level_case["anchor_case"][task_case["task_key"]] = task_case["value"]
+                task_case_value = task_case["value"]
+                if task_case["task_key"] in ["go_live_duration", "total_watch_duration", "link_micro_duration",
+                                             "co_host_duration"]:
+                    task_case_value *= 60
+                anchor_level_case["anchor_case"][task_case["task_key"]] = task_case_value
                 cases.append({"case_no": f"{case_no_1}_{case_no_2:04d}", "task_case": task_case,
                               "anchor_case": anchor_level_case})
     return cases
 
 
 if __name__ == "__main__":
-    cases = get_data(4)
+    cases = get_data(3)
     with open('data.json', 'w', encoding='utf-8') as f:
         json.dump({"cases": cases}, f, ensure_ascii=False, indent=4)

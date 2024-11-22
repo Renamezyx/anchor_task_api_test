@@ -26,9 +26,9 @@ class TestAnchor:
             res = TestAnchor.anchor_task.fetch_task_info("3,4,7,8")
         with allure.step("开启断言"):
             assert all([res.status_code == 200, res.json()["status_code"] == 0])
-            detail_info_map = res.json()["data"]["detail_info_map"]["7"] if case["task_case"][
+            detail_info_map = res.json()["data"]["detail_info_map"]["3"] if case["task_case"][
                                                                                 "task_type"] == "weekly" else \
-                res.json()["data"]["detail_info_map"]["3"]
+                res.json()["data"]["detail_info_map"]["7"]
             assert detail_info_map["task_group_progress_list"]
             logger.info(detail_info_map["task_group_progress_list"])
             assert_task = [task for task in detail_info_map["task_group_progress_list"][0]["sub_task_progress_list"] if
