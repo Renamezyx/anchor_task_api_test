@@ -10,11 +10,11 @@ from api_tests.data.data_tasks import DataTasks
 class AnchorWeeklyData:
     def __init__(self, data=None):
         data = data or {}
-        self.level_1 = data.get("1", 0)
-        self.level_2 = data.get("2", 0)
-        self.level_3 = data.get("3", 0)
-        self.level_4 = data.get("4", 0)
-        self.level_5 = data.get("5", 0)
+        self.i1 = data.get("1", 0)
+        self.i2 = data.get("2", 0)
+        self.i3 = data.get("3", 0)
+        self.i4 = data.get("4", 0)
+        self.i5 = data.get("5", 0)
         self.mock_scene = data.get("mock_scene", 0)
         self.go_live_duration = data.get("go_live_duration", 0)
         self.total_watch_duration = data.get("total_watch_duration", 0)
@@ -35,11 +35,11 @@ class AnchorWeeklyData:
 
     def to_dict(self):
         anchor_dict = self.__dict__
-        anchor_dict["1"] = anchor_dict.pop("level_1")
-        anchor_dict["2"] = anchor_dict.pop("level_2")
-        anchor_dict["3"] = anchor_dict.pop("level_3")
-        anchor_dict["4"] = anchor_dict.pop("level_4")
-        anchor_dict["5"] = anchor_dict.pop("level_5")
+        anchor_dict["1"] = anchor_dict.pop("i1")
+        anchor_dict["2"] = anchor_dict.pop("i2")
+        anchor_dict["3"] = anchor_dict.pop("i3")
+        anchor_dict["4"] = anchor_dict.pop("i4")
+        anchor_dict["5"] = anchor_dict.pop("i5")
 
         return anchor_dict
 
@@ -70,11 +70,11 @@ def get_data(scene):
 
         level_case = level_cases[random.randint(0, len(level_cases) - 1)]
         anchor_data = AnchorWeeklyData()
-        anchor_data.level_1 = level_case["Last7DayAvgAcu"]
-        anchor_data.level_2 = level_case["Last1DayFansCnt"]
-        anchor_data.level_3 = level_case["Last7DayWatchTotalDuration"]
-        anchor_data.level_4 = level_case["Last30DayIncome"]
-        anchor_data.level_5 = level_case["Last7DayIncome"]
+        anchor_data.i1 = level_case["Last7DayAvgAcu"]
+        anchor_data.i2 = level_case["Last1DayFansCnt"]
+        anchor_data.i3 = level_case["Last7DayWatchTotalDuration"]
+        anchor_data.i4 = level_case["Last30DayIncome"]
+        anchor_data.i5 = level_case["Last7DayIncome"]
         anchor_data.mock_scene = scene
         return {"level_case": level_case, "anchor_case": anchor_data.to_dict()}
 
