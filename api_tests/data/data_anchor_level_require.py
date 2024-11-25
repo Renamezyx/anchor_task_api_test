@@ -53,7 +53,7 @@ anchor_level_requires = {
             'Last7DayAvgAcu': [2, 2],
             'Last1DayFansCnt': [5 * 1000, 10 * 1000 - 1],
             'Last7DayWatchTotalDuration': [0],
-            'Last30DayIncome': [3 * 1000, 7.5 * 1000 - 1],
+            'Last30DayIncome': [3 * 1000, int(7.5 * 1000 - 1)],
             'Last7DayIncome': [1 * 1000, 2 * 1000 - 1],
             'condition': 'or'
         }
@@ -85,7 +85,7 @@ anchor_level_requires = {
             'Last7DayAvgAcu': [3, 4],
             'Last1DayFansCnt': [10 * 1000, 15 * 1000 - 1],
             'Last7DayWatchTotalDuration': [0],
-            'Last30DayIncome': [7.5 * 1000, 15 * 1000 - 1],
+            'Last30DayIncome': [int(7.5 * 1000), 15 * 1000 - 1],
             'Last7DayIncome': [2 * 1000, 4 * 1000 - 1],
             'condition': 'or'
         }
@@ -94,7 +94,7 @@ anchor_level_requires = {
         {
             "level": 5,
             'regin': 'US',
-            'Last7DayAvgAcu': [3, 29],
+            'Last7DayAvgAcu': [5, 29],
             'Last1DayFansCnt': [15 * 1000, 35 * 1000 - 1],
             'Last7DayWatchTotalDuration': [0],
             'Last30DayIncome': [40 * 1000, 600 * 1000 - 1],
@@ -104,7 +104,7 @@ anchor_level_requires = {
         {
             "level": 5,
             'regin': 'JP',
-            'Last7DayAvgAcu': [3, 29],
+            'Last7DayAvgAcu': [5, 29],
             'Last1DayFansCnt': [15 * 1000, 35 * 1000 - 1],
             'Last7DayWatchTotalDuration': [20 * 60, 999999999],
             'Last30DayIncome': [40 * 1000, 200 * 1000 - 1],
@@ -114,7 +114,7 @@ anchor_level_requires = {
         {
             "level": 5,
             'regin': '',
-            'Last7DayAvgAcu': [3, 29],
+            'Last7DayAvgAcu': [5, 29],
             'Last1DayFansCnt': [15 * 1000, 35 * 1000 - 1],
             'Last7DayWatchTotalDuration': [0],
             'Last30DayIncome': [15 * 1000, 150 * 1000 - 1],
@@ -220,12 +220,13 @@ def generate_boundary_values(level: str, regin: str = ""):
                 do_set(k, vl)
 
                 if len(v) == 1 and v == 0:
+                    # 任意
                     vl = random.randint(0, 1000000)
                     do_set(k, vl)
 
         return [dict(t) for t in {tuple(d.items()) for d in values}]
 
-    a = [i for i in anchor_level_requires[level] if i["regin"] == regin]
+
     for item in [i for i in anchor_level_requires[level] if i["regin"] == regin]:
         if regin.lower() == item['regin'].lower():
             boundary_value += set_boundary_value(item)
@@ -246,6 +247,7 @@ def generate_data_for_level(level: str, regin=""):
 
 
 if __name__ == '__main__':
-    for level in range(1, 7):
-        t = generate_data_for_level(str(level))
+        # t = generate_data_for_level(str(5))
+        t = get_level_for_data({'level': 5, 'regin': '', 'Last7DayAvgAcu': 3, 'Last1DayFansCnt': 5000, 'Last7DayWatchTotalDuration': 0, 'Last30DayIncome': 3000, 'Last7DayIncome': 1000, 'condition': 'or'})
         print(t)
+

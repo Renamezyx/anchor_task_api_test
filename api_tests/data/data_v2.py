@@ -71,7 +71,7 @@ if __name__ == '__main__':
     tasks_details_for_class_daily = tasks_details_for_class["daily"]
     for anchorLevel in tasks_details_for_class_weekly:
         for taskALevel in tasks_details_for_class_weekly[anchorLevel]:
-            info = {"ATALevel": f"{anchorLevel}_{taskALevel}","assert_value":{},"assert_awards":{}}
+            info = {"ATALevel": f"{anchorLevel}_{taskALevel}", "assert_value": {}, "assert_awards": {}}
             flag = [True]
             index = 0
             while any(flag):
@@ -84,6 +84,9 @@ if __name__ == '__main__':
                         info["assert_value"][taskKey] = anchor[taskKey]["assert_value"]
                         info["assert_awards"][taskKey] = anchor[taskKey]["assert_awards"]
                         anchor[taskKey] = anchor[taskKey]["value"]
+                        # if taskKey in ["go_live_duration", "total_watch_duration", "link_micro_duration",
+                        #                        "co_host_duration"]:
+                        #     anchor[taskKey] *= 60
                         flag.append(tasks_details_for_class_weekly[anchorLevel][taskALevel][taskKey])
                     else:
                         anchor[taskKey] = 0
