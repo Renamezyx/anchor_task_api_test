@@ -7,7 +7,7 @@ from api_tests.data.data_awards import DataAwards
 from api_tests.data.data_tasks import DataTasks
 
 
-class AnchorWeeklyData:
+class AnchorData:
     def __init__(self, data=None):
         data = data or {}
         self.i1 = data.get("1", 0)
@@ -15,7 +15,23 @@ class AnchorWeeklyData:
         self.i3 = data.get("3", 0)
         self.i4 = data.get("4", 0)
         self.i5 = data.get("5", 0)
-        self.mock_scene = data.get("mock_scene", 0)
+
+    def to_dict(self):
+        anchor_dict = self.__dict__.copy()
+        anchor_dict["1"] = anchor_dict.pop("i1")
+        anchor_dict["2"] = anchor_dict.pop("i2")
+        anchor_dict["3"] = anchor_dict.pop("i3")
+        anchor_dict["4"] = anchor_dict.pop("i4")
+        anchor_dict["5"] = anchor_dict.pop("i5")
+
+        return anchor_dict
+
+
+class AnchorWeeklyData(AnchorData):
+    def __init__(self, data=None):
+        super().__init__(data)
+        data = data or {}
+        self.mock_scene = 3
         self.go_live_duration = data.get("go_live_duration", 0)
         self.total_watch_duration = data.get("total_watch_duration", 0)
         self.gain_diamond_count = data.get("gain_diamond_count", 0)
@@ -33,13 +49,42 @@ class AnchorWeeklyData:
 
         self.live_comment_count = data.get("live_comment_count", 0)
 
+
+class AnchorDailyData(AnchorData):
+    def __init__(self, data=None):
+        super().__init__(data)
+        data = data or {}
+        self.mock_scene = 7
+        self.go_live_duration = data.get("go_live_duration", 0)
+        self.total_watch_duration = data.get("total_watch_duration", 0)
+        self.gain_diamond_count = data.get("gain_diamond_count", 0)
+        self.increase_fans_count = data.get("increase_fans_count", 0)
+        self.increase_subscription_count = data.get("increase_subscription_count", 0)
+        self.live_like_count = data.get("live_like_count", 0)
+        self.live_comment_count = data.get("live_comment_count", 0)
+
+
+class AnchorClockInData(AnchorData):
+    def __init__(self, data=None):
+        super().__init__(data)
+        data = data or {}
+        self.mock_scene = 8
+        self.clock_in_task_go_live_duration = data.get("clock_in_task_go_live_duration", (0, 0))
+        self.clock_in_task_total_watch_duration = data.get("clock_in_task_total_watch_duration", (0, 0))
+        self.clock_in_task_gain_diamond_count = data.get("clock_in_task_gain_diamond_count", (0, 0))
+
     def to_dict(self):
-        anchor_dict = self.__dict__
-        anchor_dict["1"] = anchor_dict.pop("i1")
-        anchor_dict["2"] = anchor_dict.pop("i2")
-        anchor_dict["3"] = anchor_dict.pop("i3")
-        anchor_dict["4"] = anchor_dict.pop("i4")
-        anchor_dict["5"] = anchor_dict.pop("i5")
+        anchor_dict = super().to_dict()
+
+        anchor_dict[f"clock_in_task:go_live_duration:{self.clock_in_task_go_live_duration[1]}"] = \
+            self.clock_in_task_go_live_duration[0]
+        anchor_dict[f"clock_in_task:total_watch_duration:{self.clock_in_task_total_watch_duration[1]}"] = \
+            self.clock_in_task_total_watch_duration[0]
+        anchor_dict[f"clock_in_task:gain_diamond_count:{self.clock_in_task_gain_diamond_count[1]}"] = \
+            self.clock_in_task_gain_diamond_count[0]
+        anchor_dict.pop("clock_in_task_go_live_duration")
+        anchor_dict.pop("clock_in_task_total_watch_duration")
+        anchor_dict.pop("clock_in_task_gain_diamond_count")
 
         return anchor_dict
 

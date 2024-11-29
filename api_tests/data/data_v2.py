@@ -1,10 +1,12 @@
 import json
 import random
 
-from api_tests.data.data import AnchorWeeklyData
+from api_tests.data.data import AnchorWeeklyData, AnchorDailyData, AnchorClockInData
 from api_tests.data.data_anchor_level_require import generate_data_for_level
 from api_tests.data.data_awards import DataAwards
+from api_tests.data.data_awards_clockIn import DataAwardsClockIn
 from api_tests.data.data_tasks import DataTasks
+from api_tests.data.data_tasks_clockIn import DataTasksClockIn
 
 
 def get_tasks_details_for_class():
@@ -49,65 +51,108 @@ def get_tasks_details_for_class():
     return tasks_for_t_k_al_tal
 
 
-def get_anchor_level_case(level, regin=""):
+def get_anchor_level_case(scene, level, regin=""):
     level_cases = generate_data_for_level(str(level), regin=regin)
-
     level_case = level_cases[random.randint(0, len(level_cases) - 1)]
-    anchor_data = AnchorWeeklyData()
+    match scene:
+        case 3:
+            anchor_data = AnchorWeeklyData()
+        case 7:
+            anchor_data = AnchorDailyData()
+        case 8:
+            anchor_data = AnchorClockInData()
+        case _:
+            raise Exception("scene 参数未定义")
     anchor_data.i1 = level_case["Last7DayAvgAcu"]
     anchor_data.i2 = level_case["Last1DayFansCnt"]
     anchor_data.i3 = level_case["Last7DayWatchTotalDuration"]
     anchor_data.i4 = level_case["Last30DayIncome"]
     anchor_data.i5 = level_case["Last7DayIncome"]
+    if scene == 8:
+        return anchor_data
     return anchor_data.to_dict()
 
 
-if __name__ == '__main__':
-    cases = []
-    tasks_details_for_class = get_tasks_details_for_class()
-    with open('task.json', 'w', encoding='utf-8') as f:
-        json.dump({"cases": tasks_details_for_class}, f, ensure_ascii=False, indent=4)
-    tasks_details_for_class_weekly = tasks_details_for_class["weekly"]
-    tasks_details_for_class_daily = tasks_details_for_class["daily"]
-    for anchorLevel in tasks_details_for_class_weekly:
-        for taskALevel in tasks_details_for_class_weekly[anchorLevel]:
+def gene_cases_for_type(task_details_for_class, scene):
+    res = []
+    for anchorLevel in task_details_for_class:
+        for taskALevel in task_details_for_class[anchorLevel]:
             info = {"ATALevel": f"{anchorLevel}_{taskALevel}", "assert_value": {}, "assert_awards": {}}
             flag = [True]
             index = 0
             while any(flag):
                 flag = []
-                anchor = get_anchor_level_case(anchorLevel)
-                anchor["mock_scene"] = 3
-                for taskKey in tasks_details_for_class_weekly[anchorLevel][taskALevel]:
-                    if tasks_details_for_class_weekly[anchorLevel][taskALevel][taskKey]:
-                        anchor[taskKey] = tasks_details_for_class_weekly[anchorLevel][taskALevel][taskKey].pop()
-                        info["assert_value"][taskKey] = anchor[taskKey]["assert_value"]
-                        info["assert_awards"][taskKey] = anchor[taskKey]["assert_awards"]
-                        anchor[taskKey] = anchor[taskKey]["value"]
-                        # if taskKey in ["go_live_duration", "total_watch_duration", "link_micro_duration",
-                        #                        "co_host_duration"]:
-                        #     anchor[taskKey] *= 60
-                        flag.append(tasks_details_for_class_weekly[anchorLevel][taskALevel][taskKey])
-                    else:
-                        anchor[taskKey] = 0
-                        info["assert_value"][taskKey] = None
-                        info["assert_awards"][taskKey] = None
+                anchor = get_anchor_level_case(scene=scene, level=anchorLevel)
+                # anchor["mock_scene"] = scene
+                for taskKey in task_details_for_class[anchorLevel][taskALevel]:
+                    if taskKey in anchor:
+                        if task_details_for_class[anchorLevel][taskALevel][taskKey]:
+                            anchor[taskKey] = task_details_for_class[anchorLevel][taskALevel][taskKey].pop()
+                            info["assert_value"][taskKey] = anchor[taskKey]["assert_value"]
+                            info["assert_awards"][taskKey] = anchor[taskKey]["assert_awards"]
+                            anchor[taskKey] = anchor[taskKey]["value"]
+                            # if taskKey in ["go_live_duration", "total_watch_duration", "link_micro_duration",
+                            #                        "co_host_duration"]:
+                            #     anchor[taskKey] *= 60
+                            flag.append(task_details_for_class[anchorLevel][taskALevel][taskKey])
+                        else:
+                            anchor[taskKey] = 0
+                            info["assert_value"][taskKey] = None
+                            info["assert_awards"][taskKey] = None
                 index += 1
-                cases.append({"info": info, "anchor": anchor})
+                res.append({"info": info, "anchor": anchor})
 
-            print(index)
+                print(index)
 
-    print(len(cases))
-    with open('cases.json', 'w', encoding='utf-8') as f:
-        json.dump({"cases": cases}, f, ensure_ascii=False, indent=4)
+    return res
 
-    #
-    # for key in anchor:
-    #         if key in tasks_details_for_class_weekly["anchorLevel"]:
-    #             anchor[key] = tasks_details_for_class_weekly["anchorLevel"][key].pop() if len(
-    #                 tasks_details_for_class_weekly["anchorLevel"][key]) > 0 else 0
 
-    # for l in tasks_details_for_class:
-    #     for anchor_level in tasks_details_for_class[l]:
-    #         for task_keys in tasks_details_for_class[l][anchor_level]:
-    #             print(l, task_keys, len(tasks_details_for_class[l][anchor_level][task_keys]))
+if __name__ == '__main__':
+    """
+    周日任务case生成
+    """
+    cases_weekly = None
+    cases_daily = None
+
+    tasks_details_for_class = get_tasks_details_for_class()
+    with open('task.json', 'w', encoding='utf-8') as f:
+        json.dump({"cases": tasks_details_for_class}, f, ensure_ascii=False, indent=4)
+    tasks_details_for_class_weekly = tasks_details_for_class["weekly"]
+    tasks_details_for_class_daily = tasks_details_for_class["daily"]
+    cases_weekly = gene_cases_for_type(tasks_details_for_class_weekly, 3)
+    cases_daily = gene_cases_for_type(tasks_details_for_class_daily, 7)
+    print("cases_weekly:", len(cases_weekly))
+    print("cases_daily:", len(cases_daily))
+
+    with open('cases_weekly.json', 'w', encoding='utf-8') as f:
+        json.dump({"cases": cases_weekly}, f, ensure_ascii=False, indent=4)
+    with open('cases_daily.json', 'w', encoding='utf-8') as f:
+        json.dump({"cases": cases_daily}, f, ensure_ascii=False, indent=4)
+
+
+    """
+    打卡任务生成
+    """
+    cases_clockIn = []
+    data_tasks_clockIn = DataTasksClockIn()
+    data_awards_clockIn = DataAwardsClockIn()
+    tasks_details_clockIn = data_tasks_clockIn.task_details
+    tasks_clockIn_taskKey = set([i["task_key"] for i in tasks_details_clockIn])
+    cases_clockIn = {key: [] for key in tasks_clockIn_taskKey}
+    for task_detail in tasks_details_clockIn:
+        tasks = data_tasks_clockIn.generate_boundary_values(task_detail)
+        tasks = list({json.dumps(task, sort_keys=True) for task in tasks})
+        tasks = [json.loads(task) for task in tasks]
+        for task in tasks:
+            anchor = get_anchor_level_case(8, task["anchor_level"])
+            assert_awards = data_awards_clockIn.get_award_value(task["regin"], task["anchor_level"],
+                                                                task["anchor_task_level"])
+            exec(f"anchor.{task["task_key"]} = {task["value"]}")
+            cases_clockIn[task["task_key"]].append({"anchor": anchor.to_dict(),
+                                                    "info": {"assert_value": task["assert_value"],
+                                                             "assert_awards": assert_awards}})
+
+    with open('cases_clockIn.json', 'w', encoding='utf-8') as f:
+        json.dump({"cases": cases_clockIn}, f, ensure_ascii=False, indent=4)
+
+    print("cases_clockIn:", sum(len(value) for value in cases_clockIn.values()))
