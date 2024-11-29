@@ -2,7 +2,7 @@ from api_tests.utils.xls_tools import XlsTools
 
 
 class DataAwards:
-    def __init__(self, path_award_datas="../data/award.xlsx"):
+    def __init__(self, path_award_datas="./meta/award.xlsx"):
         self.path_award_datas = path_award_datas
         self.awards_to_task_datas = None
         self.title = None

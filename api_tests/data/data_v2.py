@@ -73,7 +73,7 @@ def get_anchor_level_case(scene, level, regin=""):
     return anchor_data.to_dict()
 
 
-def gene_cases_for_type(task_details_for_class, scene):
+def gene_cases_for_type(task_details_for_class, scene, regin):
     res = []
     for anchorLevel in task_details_for_class:
         for taskALevel in task_details_for_class[anchorLevel]:
@@ -82,8 +82,7 @@ def gene_cases_for_type(task_details_for_class, scene):
             index = 0
             while any(flag):
                 flag = []
-                anchor = get_anchor_level_case(scene=scene, level=anchorLevel)
-                # anchor["mock_scene"] = scene
+                anchor = get_anchor_level_case(scene=scene, level=anchorLevel, regin=regin)
                 for taskKey in task_details_for_class[anchorLevel][taskALevel]:
                     if taskKey in anchor:
                         if task_details_for_class[anchorLevel][taskALevel][taskKey]:
@@ -107,10 +106,7 @@ def gene_cases_for_type(task_details_for_class, scene):
     return res
 
 
-if __name__ == '__main__':
-    """
-    周日任务case生成
-    """
+def gene_cases_weekly_and_daily(regin: str = ""):
     cases_weekly = None
     cases_daily = None
 
@@ -119,24 +115,22 @@ if __name__ == '__main__':
         json.dump({"cases": tasks_details_for_class}, f, ensure_ascii=False, indent=4)
     tasks_details_for_class_weekly = tasks_details_for_class["weekly"]
     tasks_details_for_class_daily = tasks_details_for_class["daily"]
-    cases_weekly = gene_cases_for_type(tasks_details_for_class_weekly, 3)
-    cases_daily = gene_cases_for_type(tasks_details_for_class_daily, 7)
-    print("cases_weekly:", len(cases_weekly))
-    print("cases_daily:", len(cases_daily))
+    cases_weekly = gene_cases_for_type(tasks_details_for_class_weekly, 3, regin)
+    cases_daily = gene_cases_for_type(tasks_details_for_class_daily, 7, regin)
+    print(f"cases_weekly_{regin or 'default'}:", len(cases_weekly))
+    print(f"cases_daily_{regin or 'default'}:", len(cases_daily))
 
-    with open('cases_weekly.json', 'w', encoding='utf-8') as f:
+    with open(f"cases_weekly_{regin or 'default'}.json", 'w', encoding='utf-8') as f:
         json.dump({"cases": cases_weekly}, f, ensure_ascii=False, indent=4)
-    with open('cases_daily.json', 'w', encoding='utf-8') as f:
+    with open(f"cases_daily_{regin or 'default'}.json", 'w', encoding='utf-8') as f:
         json.dump({"cases": cases_daily}, f, ensure_ascii=False, indent=4)
 
 
-    """
-    打卡任务生成
-    """
+def gene_cases_clockIn(regin: str = ""):
     cases_clockIn = []
     data_tasks_clockIn = DataTasksClockIn()
     data_awards_clockIn = DataAwardsClockIn()
-    tasks_details_clockIn = data_tasks_clockIn.task_details
+    tasks_details_clockIn = [t for t in data_tasks_clockIn.task_details if t["regin"].lower() == regin.lower()] or [t for t in data_tasks_clockIn.task_details if t["regin"].lower() == ""]
     tasks_clockIn_taskKey = set([i["task_key"] for i in tasks_details_clockIn])
     cases_clockIn = {key: [] for key in tasks_clockIn_taskKey}
     for task_detail in tasks_details_clockIn:
@@ -144,7 +138,7 @@ if __name__ == '__main__':
         tasks = list({json.dumps(task, sort_keys=True) for task in tasks})
         tasks = [json.loads(task) for task in tasks]
         for task in tasks:
-            anchor = get_anchor_level_case(8, task["anchor_level"])
+            anchor = get_anchor_level_case(8, task["anchor_level"], task["regin"])
             assert_awards = data_awards_clockIn.get_award_value(task["regin"], task["anchor_level"],
                                                                 task["anchor_task_level"])
             exec(f"anchor.{task["task_key"]} = {task["value"]}")
@@ -152,7 +146,18 @@ if __name__ == '__main__':
                                                     "info": {"assert_value": task["assert_value"],
                                                              "assert_awards": assert_awards}})
 
-    with open('cases_clockIn.json', 'w', encoding='utf-8') as f:
+    with open(f'cases_clockIn_{regin or "default"}.json', 'w', encoding='utf-8') as f:
         json.dump({"cases": cases_clockIn}, f, ensure_ascii=False, indent=4)
 
-    print("cases_clockIn:", sum(len(value) for value in cases_clockIn.values()))
+    print(f"cases_clockIn_{regin or "default"}:", sum(len(value) for value in cases_clockIn.values()))
+
+
+if __name__ == '__main__':
+    """
+    周日任务case生成
+    """
+    gene_cases_weekly_and_daily("US")
+    """
+    打卡任务生成
+    """
+    gene_cases_clockIn("US")

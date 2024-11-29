@@ -5,7 +5,7 @@ from api_tests.utils.xls_tools import XlsTools
 
 
 class DataAwardsClockIn:
-    def __init__(self, path_award_datas="./award_clockIn.xlsx"):
+    def __init__(self, path_award_datas="./meta/award_clockIn.xlsx"):
         self.path_award_datas = path_award_datas
         self.awards_to_task_datas = None
         self.title = None

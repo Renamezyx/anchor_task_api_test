@@ -4,7 +4,7 @@ from api_tests.utils.xls_tools import XlsTools
 
 
 class DataTasks:
-    def __init__(self, path_task_to_anchor_datas="../data/tasks.xlsx"):
+    def __init__(self, path_task_to_anchor_datas="./meta/tasks.xlsx"):
         self.task_to_anchor_datas = None
         self.title = None
         self.path_task_to_anchor_datas = path_task_to_anchor_datas

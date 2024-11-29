@@ -6,7 +6,7 @@ from api_tests.utils.xls_tools import XlsTools
 
 
 class DataTasksClockIn:
-    def __init__(self, path_tasks_data_file="./tasks_clockIn.xlsx"):
+    def __init__(self, path_tasks_data_file="./meta/tasks_clockIn.xlsx"):
         self.task_to_anchor_datas = []
         self.title = None
         self.path_tasks_data_file = path_tasks_data_file
