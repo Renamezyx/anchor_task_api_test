@@ -1,7 +1,4 @@
-import json
-
-from api_tests.data.data_awards import DataAwards
-from api_tests.utils.xls_tools import XlsTools
+from utils.xls_tools import XlsTools
 
 
 class DataAwardsClockIn:

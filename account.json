@@ -1,0 +1,64 @@
+{
+    "account": {
+        "7443692651687773239": {
+            "user_id": 7443692651687773239,
+            "session": "632920cc0e26838b3a0780ff9c46a44d",
+            "tag": [
+                "liveStudio_anchor",
+                "go_live_duration"
+            ],
+            "region": "TR",
+            "state": 0
+        },
+        "7443692687897183287": {
+            "user_id": 7443692687897183287,
+            "session": "7185bcac0b222e0edfd0a3a8a2402cb2",
+            "tag": [
+                "liveStudio_anchor",
+                "go_live_duration"
+            ],
+            "region": "TR",
+            "state": 1
+        },
+        "7443692687897166903": {
+            "user_id": 7443692687897166903,
+            "session": "06b47b4259afa6ad7511d320926dd7f8",
+            "tag": [
+                "liveStudio_anchor",
+                "total_watch_duration"
+            ],
+            "region": "TR",
+            "state": 0
+        },
+        "7439633223112934455": {
+            "user_id": 7439633223112934455,
+            "session": "fc068de842c48871f695faa1bdf6da8a",
+            "tag": [
+                "liveStudio_anchor",
+                "total_watch_duration"
+            ],
+            "region": "TR",
+            "state": 0
+        },
+        "7439633264430466103": {
+            "user_id": 7439633264430466103,
+            "session": "d2487026b27042a58c4061216dbce0f9",
+            "tag": [
+                "liveStudio_anchor",
+                "gain_diamond_count"
+            ],
+            "region": "TR",
+            "state": 0
+        },
+        "7439633325104563256": {
+            "user_id": 7439633325104563256,
+            "session": "3847c1825ca5d437dd2ee8dc364d8a27",
+            "tag": [
+                "liveStudio_anchor",
+                "gain_diamond_count"
+            ],
+            "region": "TR",
+            "state": 0
+        }
+    }
+}

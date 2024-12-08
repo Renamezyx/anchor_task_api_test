@@ -48,8 +48,4 @@ class XlsTools(object):
         self.workbook.close()
 
 
-if __name__ == '__main__':
-    xls = XlsTools("../data/meta/tasks.xlsx")
-    res = xls.read_all_rows()
-    for i in res:
-        print(i)
+

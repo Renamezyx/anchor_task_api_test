@@ -2,7 +2,7 @@ import copy
 import json
 
 from api_tests.data.data_awards_clockIn import DataAwardsClockIn
-from api_tests.utils.xls_tools import XlsTools
+from utils.xls_tools import XlsTools
 
 
 class DataTasksClockIn:

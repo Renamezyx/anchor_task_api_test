@@ -1,3 +1,4 @@
+import datetime
 import json
 import random
 
@@ -7,6 +8,9 @@ from api_tests.data.data_awards import DataAwards
 from api_tests.data.data_awards_clockIn import DataAwardsClockIn
 from api_tests.data.data_tasks import DataTasks
 from api_tests.data.data_tasks_clockIn import DataTasksClockIn
+
+case_no_1 = str(int(datetime.datetime.now().timestamp()))
+case_no_2 = 0
 
 
 def get_tasks_details_for_class():
@@ -74,14 +78,15 @@ def get_anchor_level_case(scene, level, regin=""):
 
 
 def gene_cases_for_type(task_details_for_class, scene, regin):
+    global case_no_2, case_no_1
     res = []
     for anchorLevel in task_details_for_class:
         for taskALevel in task_details_for_class[anchorLevel]:
-            info = {"ATALevel": f"{anchorLevel}_{taskALevel}", "assert_value": {}, "assert_awards": {}}
             flag = [True]
             index = 0
             while any(flag):
                 flag = []
+                info = {"ATALevel": f"{anchorLevel}_{taskALevel}", "assert_value": {}, "assert_awards": {}}
                 anchor = get_anchor_level_case(scene=scene, level=anchorLevel, regin=regin)
                 for taskKey in task_details_for_class[anchorLevel][taskALevel]:
                     if taskKey in anchor:
@@ -99,6 +104,8 @@ def gene_cases_for_type(task_details_for_class, scene, regin):
                             info["assert_value"][taskKey] = None
                             info["assert_awards"][taskKey] = None
                 index += 1
+                case_no_2 += 1
+                info["case_id"] = f"{case_no_1}_{case_no_2}"
                 res.append({"info": info, "anchor": anchor})
 
                 print(index)
@@ -128,9 +135,16 @@ def gene_cases_weekly_and_daily(regin: str = ""):
 
 def gene_cases_clockIn(regin: str = ""):
     cases_clockIn = []
+    global case_no_1, case_no_2
     data_tasks_clockIn = DataTasksClockIn()
     data_awards_clockIn = DataAwardsClockIn()
-    tasks_details_clockIn = [t for t in data_tasks_clockIn.task_details if t["regin"].lower() == regin.lower()] or [t for t in data_tasks_clockIn.task_details if t["regin"].lower() == ""]
+    tasks_details_clockIn = [t for t in data_tasks_clockIn.task_details if t["regin"].lower() == regin.lower()] or [t
+                                                                                                                    for
+                                                                                                                    t in
+                                                                                                                    data_tasks_clockIn.task_details
+                                                                                                                    if
+                                                                                                                    t[
+                                                                                                                        "regin"].lower() == ""]
     tasks_clockIn_taskKey = set([i["task_key"] for i in tasks_details_clockIn])
     cases_clockIn = {key: [] for key in tasks_clockIn_taskKey}
     for task_detail in tasks_details_clockIn:
@@ -142,9 +156,11 @@ def gene_cases_clockIn(regin: str = ""):
             assert_awards = data_awards_clockIn.get_award_value(task["regin"], task["anchor_level"],
                                                                 task["anchor_task_level"])
             exec(f"anchor.{task["task_key"]} = {task["value"]}")
+            case_no_2 += 1
             cases_clockIn[task["task_key"]].append({"anchor": anchor.to_dict(),
                                                     "info": {"assert_value": task["assert_value"],
-                                                             "assert_awards": assert_awards}})
+                                                             "assert_awards": assert_awards,
+                                                             "case_id": f"{case_no_1}_{case_no_2}"}})
 
     with open(f'cases_clockIn_{regin or "default"}.json', 'w', encoding='utf-8') as f:
         json.dump({"cases": cases_clockIn}, f, ensure_ascii=False, indent=4)
@@ -156,8 +172,8 @@ if __name__ == '__main__':
     """
     周日任务case生成
     """
-    gene_cases_weekly_and_daily("US")
+    gene_cases_weekly_and_daily("")
     """
     打卡任务生成
     """
-    gene_cases_clockIn("US")
+    gene_cases_clockIn("")

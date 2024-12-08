@@ -1,6 +1,9 @@
+from json.decoder import JSONDecodeError
+
 from requests import sessions, Response
 import config
 from common.logger_base import logger
+from charset_normalizer import detect
 
 
 def log_request_response(func):
@@ -10,10 +13,7 @@ def log_request_response(func):
         logger.info(f"req: {method.upper()} {url}")
         if response.status_code == 200:
             logger.info(f" - success, code: {response.status_code}")
-            try:
-                logger.info(f"res: {response.text}")
-            except UnicodeDecodeError as e:
-                logger.info(f"res: {response.content}")
+            logger.info(f"res: {response.json()}")
 
         else:
             logger.error(f" - fail, code: {response.status_code}")
@@ -27,8 +27,8 @@ class RequestBase(object):
         self.session = sessions.Session()
         self.debug = config.DEBUG
         self.proxies = {
-            'http': 'http://127.0.0.1:4780',
-            'https': 'http://127.0.0.1:4780',
+            'http': 'http://127.0.0.1:8002',
+            'https': 'http://127.0.0.1:8002',
         }
 
     @log_request_response

@@ -1,6 +1,6 @@
 import copy
 
-from api_tests.utils.xls_tools import XlsTools
+from utils.xls_tools import XlsTools
 
 
 class DataTasks:
